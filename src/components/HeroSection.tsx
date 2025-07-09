@@ -1,23 +1,42 @@
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { Play, Pause, Volume2, VolumeX } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import heroBg from '@/assets/hero-bg.jpg';
 
 const HeroSection = () => {
   const [isVideoMuted, setIsVideoMuted] = useState(true);
   const [isVideoPlaying, setIsVideoPlaying] = useState(true);
+  const videoRef = useRef(null);
+
+  const togglePlayPause = () => {
+    if (isVideoPlaying) {
+      videoRef.current.pause();
+    } else {
+      videoRef.current.play();
+    }
+    setIsVideoPlaying(!isVideoPlaying);
+  };
+
+  const toggleMute = () => {
+    videoRef.current.muted = !isVideoMuted;
+    setIsVideoMuted(!isVideoMuted);
+  };
 
   return (
     <section className="relative h-screen flex items-center justify-center overflow-hidden mt-20">
-      {/* Background Image */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-        style={{ backgroundImage: `url(${heroBg})` }}
+      {/* Background Video */}
+      <video
+        ref={videoRef}
+        className="absolute inset-0 w-full h-full object-cover"
+        src="https://www.akacorptech.com/images/compressed-vid.mp4"
+        autoPlay
+        loop
+        muted
+        playsInline
       />
-      
+
       {/* Overlay */}
       <div className="absolute inset-0 bg-gradient-hero" />
-      
+
       {/* Content */}
       <div className="relative z-10 container-custom text-center text-white px-4 sm:px-6">
         <div className="max-w-5xl mx-auto">
@@ -32,7 +51,7 @@ const HeroSection = () => {
               From Clunky to Custom - We Transform Ideas into Scalable Solutions.
             </p>
           </div>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center fade-in fade-in-delay-2">
             <Button className="btn-accent text-lg px-8 py-4">
               Talk to Our CTO
@@ -41,7 +60,7 @@ const HeroSection = () => {
               Get a Free Audit
             </Button>
           </div>
-          
+
           <div className="mt-12 fade-in fade-in-delay-3">
             <p className="text-white/80 font-raleway text-lg">
               "Empowering businesses globally with custom software"
@@ -56,13 +75,13 @@ const HeroSection = () => {
       {/* Video Controls */}
       <div className="absolute bottom-8 right-8 flex space-x-4 z-20">
         <button
-          onClick={() => setIsVideoPlaying(!isVideoPlaying)}
+          onClick={togglePlayPause}
           className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all duration-300"
         >
           {isVideoPlaying ? <Pause size={20} /> : <Play size={20} />}
         </button>
         <button
-          onClick={() => setIsVideoMuted(!isVideoMuted)}
+          onClick={toggleMute}
           className="p-3 bg-white/20 backdrop-blur-md rounded-full text-white hover:bg-white/30 transition-all duration-300"
         >
           {isVideoMuted ? <VolumeX size={20} /> : <Volume2 size={20} />}
