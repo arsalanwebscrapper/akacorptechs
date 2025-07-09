@@ -23,6 +23,7 @@ interface BlogPost {
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     fetchPosts();
@@ -30,16 +31,26 @@ const Blog = () => {
 
   const fetchPosts = async () => {
     try {
+      console.log('Fetching blog posts...');
       const { data, error } = await supabase
         .from('blog_posts')
         .select('id, title, slug, excerpt, featured_image, published_at, keywords, seo_title, seo_description')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
-      if (error) throw error;
+      console.log('Supabase response:', { data, error });
+
+      if (error) {
+        console.error('Supabase error:', error);
+        setError(error.message);
+        throw error;
+      }
+      
+      console.log('Found posts:', data?.length || 0);
       setPosts(data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
+      setError(error instanceof Error ? error.message : 'Failed to fetch posts');
     } finally {
       setLoading(false);
     }
@@ -69,6 +80,35 @@ const Blog = () => {
     );
   }
 
+  if (error) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+          <div className="text-center">
+            <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-4">
+              Our Blog
+            </h1>
+            <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-6 max-w-md mx-auto">
+              <h3 className="text-lg font-semibold text-destructive mb-2">
+                Error Loading Blog Posts
+              </h3>
+              <p className="text-sm text-muted-foreground">
+                {error}
+              </p>
+              <Button 
+                onClick={fetchPosts} 
+                className="mt-4"
+                variant="outline"
+              >
+                Try Again
+              </Button>
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-background to-muted/20">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -86,8 +126,11 @@ const Blog = () => {
             <h3 className="text-2xl font-semibold text-muted-foreground mb-4">
               No blog posts yet
             </h3>
-            <p className="text-muted-foreground">
+            <p className="text-muted-foreground mb-6">
               Check back soon for our latest insights and updates!
+            </p>
+            <p className="text-sm text-muted-foreground">
+              Debug info: Successfully connected to database, but no published posts found.
             </p>
           </div>
         ) : (
