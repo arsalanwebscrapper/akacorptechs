@@ -14,7 +14,6 @@ const ServicesSection = () => {
       icon: Code,
       image: customSoftwareImg,
       tags: ['Enterprise', 'Scalable', 'Custom'],
-      size: 'large'
     },
     {
       id: 2,
@@ -23,7 +22,6 @@ const ServicesSection = () => {
       icon: Brain,
       image: aiMlImg,
       tags: ['AI', 'ML', 'Automation'],
-      size: 'medium'
     },
     {
       id: 3,
@@ -31,7 +29,6 @@ const ServicesSection = () => {
       description: 'Native and cross-platform mobile applications that deliver exceptional user experiences.',
       icon: Smartphone,
       tags: ['iOS', 'Android', 'React Native'],
-      size: 'small'
     },
     {
       id: 4,
@@ -40,7 +37,6 @@ const ServicesSection = () => {
       icon: Cloud,
       image: cloudSecurityImg,
       tags: ['AWS', 'Azure', 'DevOps'],
-      size: 'medium'
     },
     {
       id: 5,
@@ -48,7 +44,6 @@ const ServicesSection = () => {
       description: 'Comprehensive security solutions to protect your digital assets and ensure compliance.',
       icon: Shield,
       tags: ['Security', 'Compliance', 'Protection'],
-      size: 'small'
     },
     {
       id: 6,
@@ -56,7 +51,6 @@ const ServicesSection = () => {
       description: 'User-centered design that creates intuitive and engaging digital experiences.',
       icon: Palette,
       tags: ['Design', 'UX', 'UI'],
-      size: 'small'
     }
   ];
 
@@ -72,26 +66,15 @@ const ServicesSection = () => {
           </p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-6 mb-12">
+        {/* Responsive grid that ensures equal heights */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-12">
           {services.map((service) => {
             const IconComponent = service.icon;
-            const getGridClasses = () => {
-              switch (service.size) {
-                case 'large':
-                  return 'lg:col-span-6';
-                case 'medium':
-                  return 'lg:col-span-4';
-                case 'small':
-                  return 'lg:col-span-2';
-                default:
-                  return 'lg:col-span-4';
-              }
-            };
 
             return (
               <div 
                 key={service.id} 
-                className={`${getGridClasses()} group bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col h-full`}
+                className="group bg-card border border-border rounded-2xl p-6 hover:shadow-lg transition-all duration-300 hover:-translate-y-1 flex flex-col h-full"
               >
                 {service.image && (
                   <div className="relative mb-6 overflow-hidden rounded-xl">
@@ -109,13 +92,13 @@ const ServicesSection = () => {
                     <IconComponent className="w-6 h-6 text-primary" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <h3 className="text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
+                    <h3 className="text-lg sm:text-xl font-bold text-foreground mb-2 group-hover:text-primary transition-colors leading-tight">
                       {service.title}
                     </h3>
                   </div>
                 </div>
                 
-                <p className="text-muted-foreground mb-6 leading-relaxed flex-grow">
+                <p className="text-sm sm:text-base text-muted-foreground mb-6 leading-relaxed flex-grow">
                   {service.description}
                 </p>
                 
@@ -123,14 +106,14 @@ const ServicesSection = () => {
                   {service.tags.map((tag) => (
                     <span 
                       key={tag}
-                      className="px-3 py-1 bg-primary/10 text-primary text-sm font-medium rounded-full border border-primary/20"
+                      className="px-2 py-1 sm:px-3 sm:py-1 bg-primary/10 text-primary text-xs sm:text-sm font-medium rounded-full border border-primary/20"
                     >
                       {tag}
                     </span>
                   ))}
                 </div>
                 
-                <Button variant="ghost" className="w-full justify-between text-primary hover:text-primary hover:bg-primary/10 font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all">
+                <Button variant="ghost" className="w-full justify-between text-primary hover:text-primary hover:bg-primary/10 font-semibold group-hover:bg-primary group-hover:text-primary-foreground transition-all mt-auto">
                   Learn More 
                   <ArrowRight className="ml-2 w-4 h-4 group-hover:translate-x-1 transition-transform" />
                 </Button>
@@ -140,7 +123,7 @@ const ServicesSection = () => {
         </div>
 
         <div className="text-center">
-          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-8 py-3">
+          <Button size="lg" className="bg-primary hover:bg-primary/90 text-primary-foreground px-6 py-3 sm:px-8">
             View All Services
           </Button>
         </div>

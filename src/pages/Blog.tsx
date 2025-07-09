@@ -44,10 +44,10 @@ const Blog = () => {
       console.log('ALL posts in database:', allData);
       setAllPosts(allData || []);
 
-      // Now fetch only published posts
+      // Now fetch only published posts - include status field
       const { data, error } = await supabase
         .from('blog_posts')
-        .select('id, title, slug, excerpt, featured_image, published_at, keywords, seo_title, seo_description')
+        .select('id, title, slug, excerpt, featured_image, published_at, keywords, seo_title, seo_description, status')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
