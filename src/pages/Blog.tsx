@@ -18,10 +18,12 @@ interface BlogPost {
   keywords: string[] | null;
   seo_title: string | null;
   seo_description: string | null;
+  status: string | null;
 }
 
 const Blog = () => {
   const [posts, setPosts] = useState<BlogPost[]>([]);
+  const [allPosts, setAllPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
@@ -32,13 +34,24 @@ const Blog = () => {
   const fetchPosts = async () => {
     try {
       console.log('Fetching blog posts...');
+      
+      // First, let's check ALL posts to see what's in the database
+      const { data: allData, error: allError } = await supabase
+        .from('blog_posts')
+        .select('id, title, slug, excerpt, featured_image, published_at, keywords, seo_title, seo_description, status')
+        .order('created_at', { ascending: false });
+
+      console.log('ALL posts in database:', allData);
+      setAllPosts(allData || []);
+
+      // Now fetch only published posts
       const { data, error } = await supabase
         .from('blog_posts')
         .select('id, title, slug, excerpt, featured_image, published_at, keywords, seo_title, seo_description')
         .eq('status', 'published')
         .order('published_at', { ascending: false });
 
-      console.log('Supabase response:', { data, error });
+      console.log('Published posts query response:', { data, error });
 
       if (error) {
         console.error('Supabase error:', error);
@@ -46,7 +59,7 @@ const Blog = () => {
         throw error;
       }
       
-      console.log('Found posts:', data?.length || 0);
+      console.log('Found published posts:', data?.length || 0);
       setPosts(data || []);
     } catch (error) {
       console.error('Error fetching posts:', error);
@@ -124,14 +137,29 @@ const Blog = () => {
         {posts.length === 0 ? (
           <div className="text-center py-12">
             <h3 className="text-2xl font-semibold text-muted-foreground mb-4">
-              No blog posts yet
+              No published blog posts found
             </h3>
             <p className="text-muted-foreground mb-6">
               Check back soon for our latest insights and updates!
             </p>
-            <p className="text-sm text-muted-foreground">
-              Debug info: Successfully connected to database, but no published posts found.
-            </p>
+            <div className="text-sm text-muted-foreground space-y-2">
+              <p className="font-semibold">Debug Information:</p>
+              <p>Total posts in database: {allPosts.length}</p>
+              <p>Published posts found: {posts.length}</p>
+              {allPosts.length > 0 && (
+                <div className="mt-4 p-4 bg-muted/50 rounded-lg text-left max-w-2xl mx-auto">
+                  <p className="font-semibold mb-2">Posts in database:</p>
+                  {allPosts.map((post, index) => (
+                    <div key={post.id} className="mb-2 text-xs">
+                      <p><strong>Post {index + 1}:</strong></p>
+                      <p>Title: {post.title}</p>
+                      <p>Status: "{post.status}"</p>
+                      <p>Published At: {post.published_at || 'NULL'}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
           </div>
         ) : (
           <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
